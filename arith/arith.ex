@@ -27,15 +27,7 @@ defmodule Arith do
     {:pred, evaluate(term)}
   end
 
-  def evaluate(:true) do
-    :true
-  end
-
-  def evaluate(:false) do
-    :false
-  end
-
-  def evaluate(:zero) do
-    :zero
+  def evaluate(value) when value in [:true, :false, :zero] do
+    value
   end
 end
