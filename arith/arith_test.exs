@@ -24,4 +24,10 @@ defmodule ArithTest do
     assert Arith.evaluate({:succ, {:pred, :zero}}) == {:succ, :zero}
     assert Arith.evaluate({:pred, {:succ, :zero}}) == :zero
   end
+
+  test 'is zero' do
+    assert Arith.evaluate({:is_zero, :zero}) == :true
+    assert Arith.evaluate({:is_zero, {:pred, :zero}}) == :true
+    assert Arith.evaluate({:is_zero, {:succ, :zero}}) == :false
+  end
 end
