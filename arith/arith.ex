@@ -11,71 +11,37 @@ defmodule Arith do
     end
   end
 
-  def eval1({:pred, term}) do
-    eval1({:pred, term}, is_numeric?(term))
-  end
-
-  def eval1({:is_zero, term}) do
-    eval1({:is_zero, term}, is_numeric?(term))
+  defp isnumericalval(term) do
+    case term do
+      :zero         -> true
+      {:succ, term} -> isnumericalval(term)
+      _             -> false
+    end
   end
 
   def eval1(term) do
-    eval1(term, false)
-  end
+    nested_numeric_val = case term do
+      {:is_zero, term} -> isnumericalval(term)
+      {:pred, term}    -> isnumericalval(term)
+      _                -> false
+    end
 
-  defp is_numeric?(:zero) do
-    true
-  end
+    case {term, nested_numeric_val} do
+      {{:if, :true, t2, _ }, _} -> t2
+      {{:if, :false, _, t3}, _} -> t3
+      {{:if, t1, t2, t3}, _}    -> {:if, eval1(t1), t2, t3}
 
-  defp is_numeric?({:succ, term}) do
-    is_numeric?(term)
-  end
+      {{:succ, t1}, _}             -> {:succ, eval1(t1)}
 
-  defp is_numeric?(_) do
-    false
-  end
+      {{:pred, :zero}, _}          -> :zero
+      {{:pred, {:succ, t1}}, true} -> t1
+      {{:pred, t1}, _}             -> {:pred, eval1(t1)}
 
-  defp eval1({:if, :true, branch, _}, _) do
-    branch
-  end
+      {{:is_zero, :zero}, _}         -> :true
+      {{:is_zero, {:succ, _}}, true} -> :false
+      {{:is_zero, t1}, _}            -> {:is_zero, eval1(t1)}
 
-  defp eval1({:if, :false, _, branch}, _) do
-    branch
-  end
-
-  defp eval1({:if, conditional, branch_1, branch_2}, _) do
-    {:if, eval1(conditional), branch_1, branch_2}
-  end
-
-  defp eval1({:succ, term}, _) do
-    {:succ, eval1(term)}
-  end
-
-  defp eval1({:pred, :zero}, _) do
-    :zero
-  end
-
-  defp eval1({:pred, {:succ, term}}, true) do
-    term
-  end
-
-  defp eval1({:pred, term}, _) do
-    {:pred, eval1(term)}
-  end
-
-  defp eval1({:is_zero, :zero}, _) do
-    :true
-  end
-
-  defp eval1({:is_zero, {:succ, _}}, true) do
-    :false
-  end
-
-  defp eval1({:is_zero, term}, _) do
-    {:is_zero, eval1(term)}
-  end
-
-  defp eval1(_, _) do
-    raise NoRuleApplies
+      {_, _} -> raise NoRuleApplies
+    end
   end
 end
