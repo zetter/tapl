@@ -1,45 +1,81 @@
 defmodule Arith do
-  def evaluate({:if, :true, branch, _}) do
-    evaluate(branch)
+  defmodule NoRuleApplies do
+    defexception message: "No rule applies"
   end
 
-  def evaluate({:if, :false, _, branch}) do
-    evaluate(branch)
+  def evaluate(term) do
+    try do
+      evaluate(evaluate1(term))
+    rescue
+      NoRuleApplies -> term
+    end
   end
 
-  def evaluate({:if, conditional, branch_1, branch_2}) do
-    evaluate({:if, evaluate(conditional), branch_1, branch_2})
+  def evaluate1({:pred, term}) do
+    evaluate1({:pred, term}, is_numeric?(term))
   end
 
-  def evaluate({:succ, term}) do
-    {:succ, evaluate(term)}
+  def evaluate1({:is_zero, term}) do
+    evaluate1({:is_zero, term}, is_numeric?(term))
   end
 
-  def evaluate({:pred, :zero}) do
+  def evaluate1(term) do
+    evaluate1(term, false)
+  end
+
+  defp is_numeric?(:zero) do
+    true
+  end
+
+  defp is_numeric?({:succ, term}) do
+    is_numeric?(term)
+  end
+
+  defp is_numeric?(_) do
+    false
+  end
+
+  defp evaluate1({:if, :true, branch, _}, _) do
+    branch
+  end
+
+  defp evaluate1({:if, :false, _, branch}, _) do
+    branch
+  end
+
+  defp evaluate1({:if, conditional, branch_1, branch_2}, _) do
+    {:if, evaluate1(conditional), branch_1, branch_2}
+  end
+
+  defp evaluate1({:succ, term}, _) do
+    {:succ, evaluate1(term)}
+  end
+
+  defp evaluate1({:pred, :zero}, _) do
     :zero
   end
 
-  def evaluate({:pred, {:succ, term}}) do
+  defp evaluate1({:pred, {:succ, term}}, true) do
     term
   end
 
-  def evaluate({:pred, term}) do
-    {:pred, evaluate(term)}
+  defp evaluate1({:pred, term}, _) do
+    {:pred, evaluate1(term)}
   end
 
-  def evaluate({:is_zero, :zero}) do
+  defp evaluate1({:is_zero, :zero}, _) do
     :true
   end
 
-  def evaluate({:is_zero, {:succ, _}}) do
+  defp evaluate1({:is_zero, {:succ, _}}, true) do
     :false
   end
 
-  def evaluate({:is_zero, term}) do
-    evaluate({:is_zero, evaluate(term)})
+  defp evaluate1({:is_zero, term}, _) do
+    {:is_zero, evaluate1(term)}
   end
 
-  def evaluate(value) when value in [:true, :false, :zero] do
-    value
+  defp evaluate1(_, _) do
+    raise NoRuleApplies
   end
 end

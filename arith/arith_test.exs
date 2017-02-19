@@ -2,6 +2,7 @@ ExUnit.start
 
 defmodule ArithTest do
   use ExUnit.Case, async: true
+  ExUnit.start(timeout: 100)
 
   test 'values' do
     assert Arith.evaluate(:true) == :true
@@ -23,11 +24,13 @@ defmodule ArithTest do
     assert Arith.evaluate({:pred, :zero}) == :zero
     assert Arith.evaluate({:succ, {:pred, :zero}}) == {:succ, :zero}
     assert Arith.evaluate({:pred, {:succ, :zero}}) == :zero
+    assert Arith.evaluate({:pred, {:succ, :true}}) == {:pred, {:succ, :true}}
   end
 
   test 'is zero' do
     assert Arith.evaluate({:is_zero, :zero}) == :true
     assert Arith.evaluate({:is_zero, {:pred, :zero}}) == :true
     assert Arith.evaluate({:is_zero, {:succ, :zero}}) == :false
+    assert Arith.evaluate({:is_zero, {:succ, :true}}) == {:is_zero, {:succ, :true}}
   end
 end
