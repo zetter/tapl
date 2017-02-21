@@ -3,12 +3,13 @@ defmodule Arith do
     defexception message: "No rule applies"
   end
 
-  def eval(term) do
-    try do
-      eval(eval1(term))
-    rescue
-      NoRuleApplies -> term
-    end
+  def eval(term, _ \\ nil)
+  def eval(term, term) do
+    term
+  end
+
+  def eval(term, _) do
+    eval(eval1(term), term)
   end
 
   defp isnumericalval(term) do
@@ -41,7 +42,7 @@ defmodule Arith do
       {{:is_zero, {:succ, _}}, true} -> :false
       {{:is_zero, t1}, _}            -> {:is_zero, eval1(t1)}
 
-      {_, _} -> raise NoRuleApplies
+      {_, _} -> term
     end
   end
 end
