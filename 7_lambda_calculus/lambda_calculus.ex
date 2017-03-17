@@ -17,10 +17,22 @@ defmodule LambdaCalculus do
     else
       {[x | ctx], x}
     end
-
   end
 
   def index2name(ctx, n) do
     Enum.at(ctx, n)
+  end
+
+  def termShift(d, t) do
+    walk(d, 0, t)
+  end
+
+  defp walk(d, c, t) do
+    case t do
+      {:var, x} when x >= c -> {:var, x + d}
+      {:var, x}             -> {:var, x}
+      {:abs, x, t1}         -> {:abs, x, walk(d, c + 1, t1)}
+      {:app, t1, t2}        -> {:app, walk(d, c, t1), walk(d, c, t2)}
+    end
   end
 end

@@ -21,4 +21,9 @@ defmodule LambdaCalculusTest do
     assert LambdaCalculus.to_string([], abs("t", abs("f", var(1)))) == "(λt. (λf. t))"
     assert LambdaCalculus.to_string([], abs("t", abs("f", var(0)))) == "(λt. (λf. f))"
   end
+
+  test 'termShift' do
+    assert LambdaCalculus.termShift(2, abs("x", abs("y", app(var(1), app(var(0), var(2)))))) ==  abs("x", abs("y", app(var(1), app(var(0), var(4)))))
+    assert LambdaCalculus.termShift(2, abs("x", app(app(var(0), var(1)), abs("y", app(app(var(0), var(1)), var(2)))))) == abs("x", app(app(var(0), var(3)), abs("y", app(app(var(0), var(1)), var(4)))))
+  end
 end
