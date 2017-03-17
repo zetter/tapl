@@ -35,4 +35,17 @@ defmodule LambdaCalculus do
       {:app, t1, t2}        -> {:app, walkShift(d, c, t1), walkShift(d, c, t2)}
     end
   end
+
+  def termSubst(j, s, t) do
+    walkSubst(j, s, 0, t)
+  end
+
+  defp walkSubst(j, s, c, t) do
+    case t do
+      {:var, x} when x == j + c -> termShift(c, s)
+      {:var, x}                 -> {:var, x}
+      {:abs, x, t1}             -> {:abs, x, walkSubst(j, s, c + 1, t1)}
+      {:app, t1, t2}            -> {:app, walkSubst(j, s, c, t1), walkSubst(j, s, c, t2)}
+    end
+  end
 end

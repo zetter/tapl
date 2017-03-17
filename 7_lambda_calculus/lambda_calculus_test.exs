@@ -26,4 +26,11 @@ defmodule LambdaCalculusTest do
     assert LambdaCalculus.termShift(2, abs("x", abs("y", app(var(1), app(var(0), var(2)))))) ==  abs("x", abs("y", app(var(1), app(var(0), var(4)))))
     assert LambdaCalculus.termShift(2, abs("x", app(app(var(0), var(1)), abs("y", app(app(var(0), var(1)), var(2)))))) == abs("x", app(app(var(0), var(3)), abs("y", app(app(var(0), var(1)), var(4)))))
   end
+
+  test 'termSubst' do
+    assert LambdaCalculus.termSubst(0, var(1), app(var(0), abs("x", abs("y", var(2))))) == app(var(1), abs("x", abs("y", var(3))))
+    assert LambdaCalculus.termSubst(0, app(var(1), abs("a", var(2))), app(var(0), abs("x", var(1)))) == app(app(var(1), abs("a", var(2))), abs("x", app(var(2), abs("a", var(3)))))
+    assert LambdaCalculus.termSubst(0, var(1), abs("b", app(var(0), var(2)))) == abs("b", app(var(0), var(2)))
+    assert LambdaCalculus.termSubst(0, var(1), abs("x", app(var(1), var(0)))) == abs("x", app(var(2), var(0)))
+  end
 end
