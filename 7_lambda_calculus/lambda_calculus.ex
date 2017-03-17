@@ -24,28 +24,28 @@ defmodule LambdaCalculus do
   end
 
   def termShift(d, t) do
-    walkShift(d, 0, t)
+    termShift(d, 0, t)
   end
 
-  defp walkShift(d, c, t) do
+  defp termShift(d, c, t) do
     case t do
       {:var, x} when x >= c -> {:var, x + d}
       {:var, x}             -> {:var, x}
-      {:abs, x, t1}         -> {:abs, x, walkShift(d, c + 1, t1)}
-      {:app, t1, t2}        -> {:app, walkShift(d, c, t1), walkShift(d, c, t2)}
+      {:abs, x, t1}         -> {:abs, x, termShift(d, c + 1, t1)}
+      {:app, t1, t2}        -> {:app, termShift(d, c, t1), termShift(d, c, t2)}
     end
   end
 
   def termSubst(j, s, t) do
-    walkSubst(j, s, 0, t)
+    termSubst(j, s, 0, t)
   end
 
-  defp walkSubst(j, s, c, t) do
+  defp termSubst(j, s, c, t) do
     case t do
       {:var, x} when x == j + c -> termShift(c, s)
       {:var, x}                 -> {:var, x}
-      {:abs, x, t1}             -> {:abs, x, walkSubst(j, s, c + 1, t1)}
-      {:app, t1, t2}            -> {:app, walkSubst(j, s, c, t1), walkSubst(j, s, c, t2)}
+      {:abs, x, t1}             -> {:abs, x, termSubst(j, s, c + 1, t1)}
+      {:app, t1, t2}            -> {:app, termSubst(j, s, c, t1), termSubst(j, s, c, t2)}
     end
   end
 end
