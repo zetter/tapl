@@ -11,7 +11,7 @@ defmodule LambdaCalculus do
     end
   end
 
-  def pick_fresh_name(ctx, x) do
+  defp pick_fresh_name(ctx, x) do
     if Enum.member?(ctx, x) do
       pick_fresh_name(ctx, "#{x}'")
     else
@@ -19,7 +19,7 @@ defmodule LambdaCalculus do
     end
   end
 
-  def index_to_name(ctx, n) do
+  defp index_to_name(ctx, n) do
     Enum.at(ctx, n)
   end
 
