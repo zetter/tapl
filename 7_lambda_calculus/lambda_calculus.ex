@@ -2,50 +2,50 @@ defmodule LambdaCalculus do
   def to_string(ctx, term) do
     case term do
       {:abs, x, t1} ->
-        {ctx2, x2} = pickfreshname(ctx, x)
+        {ctx2, x2} = pick_fresh_name(ctx, x)
         "(λ#{x2}. #{to_string(ctx2, t1)})"
       {:app, t1, t2} ->
         "(#{to_string(ctx, t1)} #{to_string(ctx, t2)})"
       {:var, n} ->
-        index2name(ctx, n)
+        index_to_name(ctx, n)
     end
   end
 
-  def pickfreshname(ctx, x) do
+  def pick_fresh_name(ctx, x) do
     if Enum.member?(ctx, x) do
-      pickfreshname(ctx, "#{x}'")
+      pick_fresh_name(ctx, "#{x}'")
     else
       {[x | ctx], x}
     end
   end
 
-  def index2name(ctx, n) do
+  def index_to_name(ctx, n) do
     Enum.at(ctx, n)
   end
 
-  def termShift(d, t) do
-    termShift(d, 0, t)
+  def term_shift(d, t) do
+    term_shift(d, 0, t)
   end
 
-  defp termShift(d, c, t) do
+  defp term_shift(d, c, t) do
     case t do
       {:var, x} when x >= c -> {:var, x + d}
       {:var, x}             -> {:var, x}
-      {:abs, x, t1}         -> {:abs, x, termShift(d, c + 1, t1)}
-      {:app, t1, t2}        -> {:app, termShift(d, c, t1), termShift(d, c, t2)}
+      {:abs, x, t1}         -> {:abs, x, term_shift(d, c + 1, t1)}
+      {:app, t1, t2}        -> {:app, term_shift(d, c, t1), term_shift(d, c, t2)}
     end
   end
 
-  def termSubst(j, s, t) do
-    termSubst(j, s, 0, t)
+  def term_subst(j, s, t) do
+    term_subst(j, s, 0, t)
   end
 
-  defp termSubst(j, s, c, t) do
+  defp term_subst(j, s, c, t) do
     case t do
-      {:var, x} when x == j + c -> termShift(c, s)
+      {:var, x} when x == j + c -> term_shift(c, s)
       {:var, x}                 -> {:var, x}
-      {:abs, x, t1}             -> {:abs, x, termSubst(j, s, c + 1, t1)}
-      {:app, t1, t2}            -> {:app, termSubst(j, s, c, t1), termSubst(j, s, c, t2)}
+      {:abs, x, t1}             -> {:abs, x, term_subst(j, s, c + 1, t1)}
+      {:app, t1, t2}            -> {:app, term_subst(j, s, c, t1), term_subst(j, s, c, t2)}
     end
   end
 end
