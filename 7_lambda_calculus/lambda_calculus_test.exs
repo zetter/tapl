@@ -33,4 +33,19 @@ defmodule LambdaCalculusTest do
     assert LambdaCalculus.term_subst(0, var(1), abs("b", app(var(0), var(2)))) == abs("b", app(var(0), var(2)))
     assert LambdaCalculus.term_subst(0, var(1), abs("x", app(var(1), var(0)))) == abs("x", app(var(2), var(0)))
   end
+
+  test 'eval' do
+    tm_id = abs("x", var(0))
+    tm_tru = abs("t", abs("f", var(1)))
+    tm_fls = abs("t", abs("f", var(0)))
+    tm_test = abs("l", abs("m", abs("n", app(app(var(2), var(1)), var(0)))))
+    tm_and =  abs("b", abs("c", app(app(var(1), var(0)), tm_fls)))
+
+    assert LambdaCalculus.eval([], app(tm_id, tm_tru)) == tm_tru
+    assert LambdaCalculus.eval([], app(app(tm_and, tm_tru), tm_tru)) == tm_tru
+    assert LambdaCalculus.eval([], app(app(tm_and, tm_fls), tm_tru)) == tm_fls
+    assert LambdaCalculus.eval([], app(app(app(tm_test, tm_tru), tm_fls), tm_tru)) == tm_fls
+    assert LambdaCalculus.eval([], app(app(app(tm_test, tm_fls), tm_fls), tm_tru)) == tm_tru
+  end
+
 end
