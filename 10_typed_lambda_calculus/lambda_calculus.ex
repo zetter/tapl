@@ -31,6 +31,7 @@ defmodule LambdaCalculus do
   def type_of(ctx, {:app, t1, t2}) do
     type_t1 = type_of(ctx, t1)
     type_t2 = type_of(ctx, t2)
+
     case type_t1 do
       {:type_arr, ^type_t2, type_t12} -> type_t12
       {:type_arr, _, _}               -> raise "parameter type mismatch"
