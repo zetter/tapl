@@ -18,17 +18,17 @@ defmodule LambdaCalculus do
     type_of([], t)
   end
 
-  def type_of(ctx, {:var, i}) do
+  defp type_of(ctx, {:var, i}) do
     get_type_from_context(ctx, i)
   end
 
-  def type_of(ctx, {:abs, x, type_t1, t2}) do
+  defp type_of(ctx, {:abs, x, type_t1, t2}) do
     new_ctx = add_binding(ctx, x, {:var_bind, type_t1})
     type_t2 = type_of(new_ctx, t2)
     {:type_arr, type_t1, type_t2}
   end
 
-  def type_of(ctx, {:app, t1, t2}) do
+  defp type_of(ctx, {:app, t1, t2}) do
     type_t1 = type_of(ctx, t1)
     type_t2 = type_of(ctx, t2)
 
@@ -39,11 +39,11 @@ defmodule LambdaCalculus do
     end
   end
 
-  def type_of(_, bool) when bool in [:true, :false] do
+  defp type_of(_, bool) when bool in [:true, :false] do
     :type_bool
   end
 
-  def type_of(ctx, {:if, t1, t2, t3}) do
+  defp type_of(ctx, {:if, t1, t2, t3}) do
     type_t1 = type_of(ctx, t1)
     type_t2 = type_of(ctx, t2)
     type_t3 = type_of(ctx, t3)
