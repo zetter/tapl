@@ -4,14 +4,10 @@ defmodule LambdaCalculus do
   end
 
   defp get_type_from_context(ctx, i) do
-    case get_binding(ctx, i) do
+    case Enum.at(ctx, i) do
       {_, {:var_bind, type}} -> type
       _                      -> raise "wrong kind of binding"
     end
-  end
-
-  defp get_binding(ctx, i) do
-    Enum.at(ctx, i)
   end
 
   def type_of(t) do
