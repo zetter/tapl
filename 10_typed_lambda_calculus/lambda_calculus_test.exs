@@ -28,7 +28,7 @@ defmodule LambdaCalculusTest do
       LambdaCalculus.type_of(tm_if(tm_false(), tm_true(), bool_to_bool))
     end
 
-    assert_raise RuntimeError, "guard of conditioanl not a boolean", fn ->
+    assert_raise RuntimeError, "guard of conditional not a boolean", fn ->
       LambdaCalculus.type_of(tm_if(bool_to_bool, tm_false(), tm_false()))
     end
   end
