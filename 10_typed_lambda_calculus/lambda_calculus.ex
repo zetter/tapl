@@ -43,13 +43,14 @@ defmodule LambdaCalculus do
   end
 
   def type_of(ctx, {:if, t1, t2, t3}) do
-    (type_of(ctx, t1) == :type_bool) or raise "guard of conditioanl not a boolean"
+    type_t1 = type_of(ctx, t1)
     type_t2 = type_of(ctx, t2)
     type_t3 = type_of(ctx, t3)
-    if type_t2 == type_t3 do
-      type_t2
-    else
-      raise "arms of conditional have different types"
+
+    case {type_t1, type_t2, type_t3} do
+      {:type_bool, type_t2_t3, type_t2_t3} -> type_t2_t3
+      {:type_bool, _, _ }                  -> raise "arms of conditional have different types"
+      _                                    -> raise "guard of conditioanl not a boolean"
     end
   end
 end
